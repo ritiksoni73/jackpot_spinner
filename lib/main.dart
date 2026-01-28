@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      home: JackpotView(),
       initialBinding: JackpotBinding(),
       getPages: [
         GetPage(
