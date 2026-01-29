@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jackpot_machine/core/constants/string_constants.dart';
 
@@ -5,11 +6,9 @@ class TiltedButton extends StatelessWidget {
   const TiltedButton({
     super.key,
     required this.onTap,
-    required this.onDoubleTap,
   });
 
   final VoidCallback onTap;
-  final VoidCallback onDoubleTap;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +19,12 @@ class TiltedButton extends StatelessWidget {
         ..rotateX(-0.3)
         ..rotateY(0),
       child: Container(
-        height: MediaQuery.of(context).size.height / 4,
-        width: MediaQuery.of(context).size.width / 2,
+        height:  kIsWeb
+            ? MediaQuery.of(context).size.height / 4
+            : 150,
+        width: kIsWeb
+            ? MediaQuery.of(context).size.width / 2
+            : MediaQuery.of(context).size.width / 1.2,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.grey, Colors.black],
@@ -40,7 +43,6 @@ class TiltedButton extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: onTap,
-          onDoubleTap: onDoubleTap,
           child: Transform(
             alignment: Alignment.center,
             transform: Matrix4.identity()

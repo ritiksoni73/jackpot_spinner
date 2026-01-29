@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jackpot_machine/presentation/widgets/tilted_button.dart';
 
@@ -27,8 +28,12 @@ class MultiRollerWidget extends StatelessWidget {
               ..rotateX(0.2)
               ..rotateY(0),
             child: Container(
-              height: MediaQuery.of(context).size.height / 2,
-              width: MediaQuery.of(context).size.width / 2,
+              height: kIsWeb
+                  ? MediaQuery.of(context).size.height / 2
+                  : MediaQuery.of(context).size.height / 2.2,
+              width:  kIsWeb
+                  ? MediaQuery.of(context).size.width / 2
+                  : MediaQuery.of(context).size.width / 1.2,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.black, Colors.grey],
@@ -103,7 +108,7 @@ class MultiRollerWidget extends StatelessWidget {
             ),
           ),
         ),
-        TiltedButton(onTap: _spin, onDoubleTap: _spinToWin),
+        TiltedButton(onTap: _spin),
       ],
     );
   }
@@ -112,8 +117,8 @@ class MultiRollerWidget extends StatelessWidget {
     required ScrollController controller,
     required List<String> items,
     required double boxHeight,
-    required boxWidth,
-    required itemHeight,
+    required double boxWidth,
+    required double itemHeight,
   }) {
     return Expanded(
       child: Row(
@@ -148,6 +153,7 @@ class MultiRollerWidget extends StatelessWidget {
   }
 
   Map<ScrollController, double> track = {};
+
   Future<void> _animateToElement({
     required ScrollController controller,
     required int itemLength,
@@ -162,9 +168,13 @@ class MultiRollerWidget extends StatelessWidget {
       curve: Curves.easeOutCubic,
     );
     if (track[controller] == null) {
-      track[controller] = fixRoundOffset + (itemHeight * targetIndex.toDouble());
+      track[controller] =
+          fixRoundOffset + (itemHeight * targetIndex.toDouble());
     } else {
-      track[controller] = track[controller]! + fixRoundOffset + (itemHeight * targetIndex.toDouble());
+      track[controller] =
+          track[controller]! +
+          fixRoundOffset +
+          (itemHeight * targetIndex.toDouble());
     }
     await controller.animateTo(
       track[controller]!,
@@ -198,30 +208,5 @@ class MultiRollerWidget extends StatelessWidget {
       });
     }
     onComplete(false);
-  }
-
-  Future<void> _spinToWin() async {
-    final num = Random().nextInt(items.length);
-    _animateToElement(
-      controller: controller1,
-      itemLength: items.length,
-      targetIndex: num,
-    );
-    _animateToElement(
-      controller: controller2,
-      itemLength: items.length,
-      targetIndex: num,
-    );
-    _animateToElement(
-      controller: controller3,
-      itemLength: items.length,
-      targetIndex: num,
-    );
-    await Future.delayed(Duration(milliseconds: 4400), () {
-      onComplete(true);
-    });
-    await Future.delayed(Duration(seconds: 1), () {
-      onComplete(false);
-    });
   }
 }
